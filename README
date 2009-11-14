@@ -1,0 +1,5 @@
+Use this command to convert your pdfs
+
+pdf2swf -T9 -s insertstop input.pdf -o output.swf
+
+License http://www.mozilla.org/MPL/MPL-1.1.html
