@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" creationComplete="initSWF();">
+	<mx:HBox>
+		<mx:ApplicationControlBar >
+			<mx:Button label="Prev" click="prevFrame();"/>
+			<mx:Button label="Next" click="nextFrame();"/>
+			<mx:Button label="Print" click="printAll();" id="printButton" enabled="{canPrint}"/>
+			<mx:Label text="Label" id="pageNumber"/>
+		</mx:ApplicationControlBar>
+	</mx:HBox>
+	
+	<mx:SWFLoader scaleContent="true" autoLoad="false" id="viewport" top="89" bottom="-550" right="68.5" left="68.5" complete="initApp()"/>
+	<mx:Script>
+		<![CDATA[
+		
+			 [Bindable ]
+          	 public var swfURL:String;
+          	 [Bindable ]
+          	 public var canPrint:Boolean;
+          	 
+          	 public var frameTotal:Number;
+          	 public var frameCurrent:Number=1;
+          	 public var loadedSM:MovieClip;
+          	 
+          	 public function initSWF():void{
+          	 	canPrint = Application.application.parameters.canPrint;
+          	 	//swfURL 
+          	 	viewport.load(Application.application.parameters.swfURL);
+          	 }
+          	 
+          	 public function initApp():void{
+          	 	loadedSM = MovieClip(viewport.content);
+          	 	frameTotal = loadedSM.totalFrames;
+          	 	pageNumber.text = frameCurrent+" Of "+frameTotal;
+          	 }
+          	 
+          	 public function nextFrame():void{
+          	 	if(frameCurrent<=frameTotal){
+          	 		loadedSM.nextFrame();
+          	 		frameCurrent++;
+          	 		pageNumber.text = frameCurrent+" Of "+frameTotal;
+          	 	}
+          	 }
+          	 public function prevFrame():void{
+          	 	if(frameCurrent>0){
+          	 		loadedSM.prevFrame()
+          	 		frameCurrent--;
+          	 		pageNumber.text = frameCurrent+" Of "+frameTotal;
+          	 	}
+          	 }
+          	 public function printAll():void{
+          	 	var printJob:PrintJob = new PrintJob();
+          	 	printJob.start();
+          	 	var idxPage:Number = 1;
+          	 	if (loadedSM.height > printJob.pageHeight)
+				{
+					trace(loadedSM.height +"="+ printJob.pageHeight);
+				    loadedSM.scaleY = .75;
+				}
+
+
+          	 	for( idxPage;idxPage <= 5;idxPage++ ){
+          	 		loadedSM.gotoAndStop(idxPage);
+          	 		printJob.addPage(loadedSM);
+          	 		          	 			
+          	 	}
+          	 	printJob.send();
+          	 	loadedSM.scaleY = 1;
+          	 }
+		]]>
+	</mx:Script>
+	
+</mx:Application>
